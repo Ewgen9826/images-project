@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
   
   // },
   destination: function(req, file, cb) {
-    cb(null, __dirname + '/photos')
+    cb(null, './photos')
   },
   filename: (req, file, cb) => {
     fileName = 'original' + path.extname(file.originalname);
