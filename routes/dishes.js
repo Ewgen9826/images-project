@@ -26,14 +26,17 @@ const rs = () => Math.random().toString(36).slice(-12);
 //Storage image
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dir = '/' + rs();
+    // destination: (req, file, cb) => {
+    //     const dir = '/' + rs();
 
-        req.dir = dir;
-        mkdirp(config.DESTINATION + dir, err => cb(err, config.DESTINATION + dir))
+    //     req.dir = dir;
+    //     mkdirp(config.DESTINATION + dir, err => cb(err, config.DESTINATION + dir))
 
 
-    },
+    // },
+    destination: function(req, file, cb) {
+        cb(null, __dirname + '/photos')
+      },
     filename: (req, file, cb) => {
         fileName = 'original' + path.extname(file.originalname);
         cb(null, fileName);
