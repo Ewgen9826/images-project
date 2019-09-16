@@ -47,7 +47,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/photos', express.static(path.join(__dirname, '/photos')));
+app.use('/photos', express.static(path.join(__dirname, '../../photos')));
 
 app.use('/', loginRouter);
 app.use('/login', loginRouter);
