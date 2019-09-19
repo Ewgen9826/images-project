@@ -47,10 +47,9 @@ $(document).ready(function () {
         switch (ext) {
            
             case 'png':
-           
-              
+                    
                 $(".error_image").css("display", "none");
-                $("#error_button").css({"pointer-events":"auto", "opacity":"1" });
+           
                 break;
             default:
                 $(".error_image").css("display", "flex");

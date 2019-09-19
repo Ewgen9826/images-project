@@ -46,11 +46,9 @@ $(document).ready(function () {
         var ext = this.value.match(/\.(.+)$/)[1];
         switch (ext) {
            
-            case 'png':
-           
-               
+            case 'png':              
                 $(".error_image").css("display", "none");
-                $("#error_button").css({"pointer-events":"auto", "opacity":"1" });
+            
                 break;
             default:
                 $(".error_image").css("display", "flex");

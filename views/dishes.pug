@@ -69,8 +69,8 @@ body
               label.container__form__label(for='title') Title
               input#title.container__form__input(type='text', name='title_edit', placeholder='Enter title', required)
               
-              label.container__form__label(for='alternative') Alternative name (Values ​​through "^")
-              input#alternative.container__form__input(type='text', name='alternative_edit[]', placeholder='Enter alternative name')
+              label.container__form__label(for='alternative') Alternative name
+              div#alternative
               div.add__block-edit Additional alternative name
 
               label.container__form__label(for='source') Source
@@ -85,7 +85,7 @@ body
               p.error_image This is not an allowed file type!
               div.block__images
              
-              button.container__form__button-edit(type = "submit") Save
+              button.container__form__button-edit(type = "submit" required) Save
               a.container__form__button_close(href='/dishes/1') Cancel
 
      //--Filter for dishes

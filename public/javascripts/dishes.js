@@ -52,7 +52,8 @@ $(document).ready(function () {
     });
 
     $('.add__block-edit').on('click', function (e) {
-        $('#alternative').clone().insertAfter('#alternative');
+        // $('.container__form__input').clone().insertAfter('#alternative');
+        $('#alternative').append(`<input type='text', id='a', class='container__form__input', name='alternative_edit[]', placeholder='Enter alternative name'>`);
 
     });
 
@@ -124,7 +125,7 @@ $(document).ready(function () {
         $target = $(e.target);
         const id = $target.attr('data-id');
         const title = $target.attr('data-title');
-        const alternative = $target.attr('data-alternative');
+        var alternative = $target.attr('data-alternative');
         const source = $target.attr('data-source');
         const description = $target.attr('data-description');
         const datacategory = $target.attr('data-category');
@@ -138,6 +139,27 @@ $(document).ready(function () {
 
                 $("#title").val(title);
                 $("#alternative").val(alternative);
+                 
+                var arr_alternative = alternative.split('^');
+               
+                for (i = 0; i < arr_alternative.length; i++) {
+
+                    if(arr_alternative[i] == ''){
+                       
+                        $("#a").css("display", "none");
+
+                    } else {
+                        $('#alternative').prepend(`<input type='text', id='a'  value='${arr_alternative[i]}', class='container__form__input', name='alternative_edit[]', placeholder='Enter alternative name'>`);
+
+                    }
+                   
+                    
+                        
+       
+                }
+              
+                
+              
                 $("#source").val(source);
                 $("#description").val(description);
                 $("#category").val(datacategory);
@@ -146,103 +168,93 @@ $(document).ready(function () {
                 function Image() {
 
 
+
                     const imageJson = JSON.parse(image);
 
                     if (image.length > 20) {
+                        if (imageJson == '') {
+                            $("#block__images__li").css("display", "none");
+                        }
+                        else {
+                            for (i = 0; i < imageJson.length; i++) {
+                                var scr = "/photos/" + imageJson[i] + "/original.jpg";
+                                $('.block__images').prepend('<div id="block__images__li">');
+                                $('#block__images__li').prepend('<img id="img-src" src=' + scr + ' width="240px" height="170px">');
+                                $('#block__images__li').prepend(`<a id="btn-delete" data-id=${imageJson[i]} href="#" class="delete-image"> Delete`);
 
-                        if(imageJson == ''){
+
+
+                                $('#btn-delete').on('click', function (e) {
+                                    var index = $(this).attr('data-id');
+                                    smoke.confirm("Do you want to delete the image?", function (result) {
+
+                                        if (result === false) { return window.location = ''; }
+                                        else {
+                                            $.ajax({
+                                                type: 'DELETE',
+                                                url: '/dishes/edit/image/' + id + '?imageid=' + index,
+                                                success: function (res) {
+                                                },
+                                                error: function (err) {
+                                                    console.log(err);
+                                                }
+                                            });
+                                            document.getElementById("block__images__li").remove();
+
+                                        }
+                                    });
+                                });
+
+
+
+                            }
+
+
+                        }
+
+
+                    } else {
+
+                        if (imageJson == '') {
                             $("#block__images__li").css("display", "none");
 
                         }
                         else {
-                            
-                        for (i = 0; i < imageJson.length; i++) {
-
-                            var scr = "/photos/" + imageJson[i] + "/original.jpg";
-
-
+                            var scr = "/photos/" + imageJson + "/original.jpg";
                             $('.block__images').prepend('<div id="block__images__li">');
                             $('#block__images__li').prepend('<img id="img-src" src=' + scr + ' width="240px" height="170px">');
-                            $('#block__images__li').prepend(`<a id="btn-delete" data-id=${imageJson[i]} href="#" class="delete-image"> Delete`);
-
+                            $('#block__images__li').prepend('<a id="btn-delete" class="delete-image"> Delete');
                             $('#btn-delete').on('click', function (e) {
-                                var index = $(this).attr('data-id');
+
                                 smoke.confirm("Do you want to delete the image?", function (result) {
+                                    if (result === false) { return window.location = ''; };
 
-                                    if (result === false) { return window.location = ''; }; 
                                     $.ajax({
-                                        type: 'DELETE',
-                                        url: '/dishes/edit/image/' + id + '?imageid=' + index,
 
+                                        type: 'DELETE',
+                                        url: '/dishes/edit/image/' + id + '?imageid=' + imageJson,
 
                                         success: function (res) {
 
-                                           
+                                            $("#block__images__li").css("display", "none");
+
                                         },
                                         error: function (err) {
                                             console.log(err);
                                         }
                                     });
+
                                     $("#block__images__li").css("display", "none");
-                                    window.location = '';
-                                   
-    
-     
-                                })
-                              
-                               
-                            });
 
-                        }
 
-                        }
-
-                      
-
-                    } else {
-
-                       
-                        if(imageJson == ''){
-                            $("#block__images__li").css("display", "none");
-
-                        }
-                        else{
-                            
-                        var scr = "/photos/" + imageJson + "/original.jpg";
-                        $('.block__images').prepend('<div id="block__images__li">');
-                        $('#block__images__li').prepend('<img id="img-src" src=' + scr + ' width="240px" height="170px">');
-                        $('#block__images__li').prepend('<a id="btn-delete" class="delete-image"> Delete');                    
-                        $('#btn-delete').on('click', function (e) {
-                       
-                            smoke.confirm("Do you want to delete the image?", function (result) {
-                                if (result === false) { return window.location = ''; }; 
-
-                                $.ajax({
-
-                                    type: 'DELETE',
-                                    url: '/dishes/edit/image/' + id + '?imageid=' + imageJson,
-
-                                    success: function (res) {
-               
-                                        $("#block__images__li").css("display", "none");
-                                        
-                                    },
-                                    error: function (err) {
-                                        console.log(err);
-                                    }
                                 });
-                             
-                                $("#block__images__li").css("display", "none");
-                               
 
-                            });
-
-                        })
+                            })
 
                         }
 
-                     
-                   }
+
+                    }
 
                 }
                 Image();

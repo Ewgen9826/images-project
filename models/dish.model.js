@@ -7,7 +7,7 @@ var dishSchema = new mongoose.Schema({
     category_id: {
         type: String,
         ref: 'Category',
-        default: ''
+        default: 'Main'
 
     },
     cuisine_id: {

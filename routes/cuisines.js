@@ -15,7 +15,7 @@ const rs = () => Math.random().toString(36).slice(-12);
 //Image storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = '/photos/' + rs();
+    const dir = '/' + rs();
     req.dir = dir;
     mkdirp(config.DESTINATION + dir, err => cb(err, config.DESTINATION + dir))
     
@@ -101,10 +101,30 @@ router.get('/:id', Guard, async(req, res) => {
 // Create new cuisine
 router.post('/uploads', Guard, upload.single("file"), async(req, res) => {
 
-    var cuisine = new Cuisine({ title: req.body.title, icon_id: req.file.destination.replace('photos/', '') });
+  
+
+  if(req.file == undefined){
+
+    var cuisine = new Cuisine({ 
+      title: req.body.title, 
+   
+    });
+
+
+  } else {
+    var cuisine = new Cuisine({ 
+      title: req.body.title, 
+      icon_id: req.file.destination.replace('photos/', '')
+    });
+
+
+  }
+
+   
     try{
         await cuisine.save()
         res.status(201).redirect('/cuisines');
+       
 
     } catch (e) {
         errorHandler(res, e);
@@ -150,7 +170,14 @@ router.post('/edit/:id', Guard, upload.single("files"), async(req, res) => {
     let cuisine = {};
     cuisine.title = req.body.title_edit;
     cuisine.title_lc = req.body.title_edit.toLowerCase();
-    cuisine.icon_id = req.file.destination.replace('photos/', '');
+    if(req.file == undefined){
+      cuisine.icon_id = ''
+
+    } else {
+      cuisine.icon_id = req.file.destination.replace('photos/', '');
+
+    }
+    
     cuisine.version = 1;
     let query = {_id:req.params.id};
 

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-const dbURI = 'mongodb://localhost:27017/test';
+const dbURI = 'mongodb://localhost:27017/webadmin';
 mongoose.connect(dbURI, { useNewUrlParser: true });
 mongoose.connection.on('connected', function() {
     console.info("Mongoose connected to: " +dbURI);

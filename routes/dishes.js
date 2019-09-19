@@ -27,7 +27,7 @@ const rs = () => Math.random().toString(36).slice(-12);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = '/photos/' + rs();
+        const dir = '/' + rs();
 
         req.dir = dir;
         mkdirp(config.DESTINATION + dir, err => cb(err, config.DESTINATION + dir))
@@ -59,55 +59,12 @@ var upload = multer({
 });
 
 
-
-// router.get('/', Guard, async (req, res) => {
-//     try {
-
-//         let dishes = [];
-//         const categories = await Category.find({});
-//         const cuisines = await Cuisine.find({});
-//         let selectcat = 'All';
-//         let selectcui = 'All';
-//         let catfilter = req.query.catfilter;
-//         let cuifilter = req.query.cuifilter;
-
-//         if (catfilter) {
-//             currentcat = await Category.findById(catfilter);
-//             selectcat = currentcat.title;
-//         }
-//         if (cuifilter) {
-//             currentui = await Cuisine.findById(cuifilter);
-//             selectcui = currentui.title;
-//         }
-
-
-//         await Dish.find({}, (err, data) => {
-//             dishes = data;
-//             if (catfilter) {
-//                 dishes = dishes.filter(d => d.category_id === catfilter);
-//             }
-//             if (cuifilter) {
-//                 dishes = dishes.filter(d => d.cuisine_id === cuifilter);
-//             }
-
-//         });
-
-//         res.render('dishes', { dishes: dishes, category: categories, cuisines: cuisines, selectcat: selectcat, selectcui: selectcui });
-
-
-//     } catch (e) {
-//         errorHandler(res, e);
-//     }
-// });
-
-
-
 router.get('/:page', Guard, async (req, res) => {
     try {
 
         let dishes = [];
 
-        const perPage = 5; //count pages
+        const perPage = 15; //count pages
         const page = req.params.page || 1;
 
         const categories = await Category.find({});
@@ -164,15 +121,7 @@ router.get('/:page', Guard, async (req, res) => {
 
         }
 
-       
-
-        ///////
-
-       
-
-
-
-      
+     
 
     } catch (e) {
         errorHandler(res, e);
@@ -180,68 +129,6 @@ router.get('/:page', Guard, async (req, res) => {
 });
 
 
-// router.get('/:page', Guard, async (req, res) => {
-//     try {
-
-//         let dishes = [];
-
-//         let perPage = 5;
-//         let page = req.params.page || 1;
-
-//         const categories = await Category.find({});
-//         const cuisines = await Cuisine.find({});
-//         let selectcat = 'All';
-//         let selectcui = 'All';
-//         let catfilter = req.query.catfilter;
-//         let cuifilter = req.query.cuifilter;
-
-//         if (catfilter) {
-//             currentcat = await Category.findById(catfilter);
-//             selectcat = currentcat.title;
-//         }
-//         if (cuifilter) {
-//             currentui = await Cuisine.findById(cuifilter);
-//             selectcui = currentui.title;
-//         }
-
-
-
-//         Dish.find({}).skip((perPage * page) - perPage).limit(perPage).exec(async (err, data) => {
-//             dishes = data;
-//             if (catfilter) {
-//                 dishes = dishes.filter(d => d.category_id === catfilter);
-//             }
-//             if (cuifilter) {
-//                 dishes = dishes.filter(d => d.cuisine_id === cuifilter);
-//             }
-
-          
-
-
-//             Dish.count().exec(function (err, count) {
-//                 if (err) return next(err)
-
-                
-//                 res.render('dishes', { 
-//                     dishes: dishes, 
-//                     category: categories, 
-//                     cuisines: cuisines, 
-//                     selectcat: selectcat, 
-//                     selectcui: selectcui, 
-//                     current: page, 
-//                     pages: Math.ceil(count/perPage) 
-//                 });
-//             })
-//         });
-
-
-
-
-
-//     } catch (e) {
-//         errorHandler(res, e);
-//     }
-// });
 
 
 //Create a new dish
@@ -312,13 +199,25 @@ router.delete('/:id', Guard, async (req, res) => {
 router.delete('/edit/image/:id', Guard, async (req, res) => {
 
     let dish = await Dish.findOne({ _id: req.params.id });
+    let cui_id = dish.cuisine_id;
+
+
     let image_id = req.query.imageid;
     const images = dish.photo_id.filter(photo => photo !== image_id);
     dish.photo_id = images;
 
+
+    let cuisine = await Cuisine.findById({ _id: cui_id });
+    await Cuisine.findOneAndUpdate({ _id: cuisine._id }, { $set: { version: cuisine.version += 1 } }, (err, result) => { });
+    
+
+
+
+    
+
     try {
         await Dish.updateOne({ _id: req.params.id }, dish);
-
+      
 
 
     } catch (e) {

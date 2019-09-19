@@ -16,7 +16,7 @@ const rs = () => Math.random().toString(36).slice(-12);
 //Storage for image
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = '/photos/' + rs();
+    const dir = '/' + rs();
     req.dir = dir;
     mkdirp(config.DESTINATION + dir, err => cb(err, config.DESTINATION + dir))
   
@@ -64,11 +64,24 @@ router.post('/uploads', Guard, upload.single("file"), async (req, res, err) => {
 
   try {
 
-    var category = new Category({
-      title: req.body.title,
-      icon_id: req.file.destination.replace('photos/', '')
+    if(req.file == undefined){
+      var category = new Category({
+        title: req.body.title
+      
+  
+      });
 
-    });
+    } else {
+
+      var category = new Category({
+        title: req.body.title,
+        icon_id: req.file.destination.replace('photos/', '')
+  
+      });
+
+    }
+
+   
 
  
     category.save();
@@ -135,8 +148,14 @@ router.post('/edit/:id', Guard, upload.single("files"), async(req, res) => {
   category.title = req.body.title_edit;
   category.title_lc = req.body.title_edit.toLowerCase();
  
- 
-  category.icon_id = req.file.destination.replace('photos/', '');
+  if(req.file == undefined){
+    category.icon_id = '';
+
+  } else {
+    category.icon_id = req.file.destination.replace('photos/', '');
+
+  }
+  
     
   
   
